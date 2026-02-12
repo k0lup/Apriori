@@ -1,36 +1,58 @@
+// ================ main.cpp ================
+#include "apriori.h"
+#include "rule_generator.h"
 #include <iostream>
 
-#include <vector>
-#include <map>
-#include <string>
+int main() {
+    std::vector<std::vector<int>> transactions = {
+        {1, 2, 3},
+        {1, 4},
+        {1, 2, 4},
+        {2, 3},
+        {1, 2, 3, 4}
+    };
 
-void aprioriAlg(const std::vector<std::vector<int>>& transactions, int minimum) {
-    std::vector<std::vector<int>> results;
+    std::cout << "========================================\n";
+    std::cout << "      АЛГОРИТМ APRIORI НА C++\n";
+    std::cout << "========================================\n\n";
 
-    for (int i = 0; i < transactions.size(); ++i) {
-        std::vector<int> temp_result;
-        for (int j = 0; j < transactions.size(); ++j) {
-            std::map<int, int> count;
-            for (int k = 0; k < transactions[j].size(); ++k) {
-                if (count.find(transactions[j][k]) == count.end()) {
-                    count.insert(transactions[j][k], 1);
-                } else {
-                    count[transactions[j][k]]++;
-                }
-            }
-            for (const auto& pair : count) {
-                if (pair.second >= minimum) {
-                    temp_result.push_back(pair.first);
-                }
-            }
+    std::cout << "Исходные транзакции:\n";
+    for (int i = 0; i < transactions.size(); i++) {
+        std::cout << "Чек " << i + 1 << ": {";
+        for (int j = 0; j < transactions[i].size(); j++) {
+            std::cout << transactions[i][j];
+            if (j < transactions[i].size() - 1) std::cout << ", ";
         }
-        results.push_back(temp_result);
+        std::cout << "}\n";
     }
-}
+    std::cout << "\n";
 
-int main(int argc, char** argv) {
+    int min_support = 3;
+    double min_confidence = 0.7;
 
-    std::vector<std::vector<int>> transactions;
+    std::cout << "Параметры:\n";
+    std::cout << "  Минимальная поддержка: " << min_support
+              << " транзакций\n";
+    std::cout << "  Минимальная достоверность: " << min_confidence * 100 << "%\n\n";
+
+    std::cout << "--------- ЗАПУСК APRIORI ---------\n\n";
+
+    Apriori apriori(transactions, min_support);
+    apriori.run();
+    apriori.printResults();
+
+    std::cout << "\n--------- ГЕНЕРАЦИЯ ПРАВИЛ ---------\n";
+
+    RuleGenerator rule_gen(
+        apriori.getResults(),
+        min_confidence,
+        transactions.size()
+    );
+    rule_gen.printRules();
+
+    std::cout << "\n========================================\n";
+    std::cout << "            РАБОТА ЗАВЕРШЕНА\n";
+    std::cout << "========================================\n";
 
     return 0;
 }
