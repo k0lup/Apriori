@@ -53,7 +53,7 @@ std::vector<std::vector<int>> CandidateGenerator::prune(
     std::vector<std::vector<int>> valid_candidates;
 
     if (frequent_itemsets.empty()) {
-        return candidates;
+        return valid_candidates;
     }
 
     int k = frequent_itemsets[0].items.size();
